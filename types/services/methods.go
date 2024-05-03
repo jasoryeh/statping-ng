@@ -296,6 +296,7 @@ func (s Service) OnlineDaysPercent(days int) float32 {
 func (s *Service) OnlineSince(ago time.Time) float32 {
 	failsList := s.FailuresSince(ago).Count()
 	hitsList := s.HitsSince(ago).Count()
+	totalList := failsList+hitsList
 
 	// If there were no failures, and we have success
 	// Then return 100% uptime
@@ -310,7 +311,7 @@ func (s *Service) OnlineSince(ago time.Time) float32 {
 	}
 
 	// Otherwise, calculate the uptime percentage
-	avg := (float64(failsList) / float64(hitsList)) * 100
+	avg := (float64(hitsList) / float64(totalList)) * 100
 	avg = 100 - avg
 	if avg < 0 {
 		avg = 0
