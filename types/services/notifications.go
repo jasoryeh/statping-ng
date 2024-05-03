@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/statping-ng/statping-ng/types/failures"
 	"github.com/statping-ng/statping-ng/types/notifications"
 	"github.com/statping-ng/statping-ng/utils"
@@ -12,7 +13,12 @@ func AddNotifier(n ServiceNotifier) {
 }
 
 func UpdateNotifiers() {
-	for _, n := range notifications.All() {
+	notifiersList := notifications.All()
+	if notifiersList == nil {
+		log.Errorf(fmt.Sprintf("Database error on notifications.All() in UpdateNotifiers %s", notifiersList))
+		return
+	}
+	for _, n := range notifiersList {
 		notifier := allNotifiers[n.Method]
 		notifier.Select().UpdateFields(n)
 	}
